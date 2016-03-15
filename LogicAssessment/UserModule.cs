@@ -32,6 +32,7 @@ namespace LogicAssessment
                 var user = this.Bind<User>();
 
                 var existingUser = userRepository.Get(user.UserId, user.Password);
+                userRepository.Delete(existingUser);
 
                 return (existingUser != null).ToString().ToLower();
             };

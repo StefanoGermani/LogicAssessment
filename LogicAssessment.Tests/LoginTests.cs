@@ -30,6 +30,34 @@ namespace LogicAssessment.Tests
             Assert.Equal("true", result.Body.AsString());
         }
 
+        [Fact]
+        public void cannot_login_with_the_same_password_twice()
+        {
+            var browser = new Browser(with => with.Module<UserModule>());
+
+            var password = GeneratePassword(browser, 12345).Body.AsString();
+            var user = new UserTestModel() { UserId = 12345, Password = password };
+
+            var result = browser.Post("/login", with =>
+            {
+                with.HttpRequest();
+                with.JsonBody(user);
+            }
+            );
+
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("true", result.Body.AsString());
+
+            result = browser.Post("/login", with =>
+            {
+                with.HttpRequest();
+                with.JsonBody(user);
+            });
+
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("false", result.Body.AsString());
+        }
+
         [Theory]
         [InlineData("abcdefgh")]
         [InlineData("123asdfa390")]
