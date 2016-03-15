@@ -17,17 +17,62 @@ namespace LogicAssessment.Tests
             var browser = new Browser(with => with.Module<UserModule>());
 
             var password = GeneratePassword(browser, 12345).Body.AsString();
-            var user = new UserTestModel() { UserId = 12345, Password = password };
 
             var result = browser.Post("/login", with =>
                 {
                     with.HttpRequest();
-                    with.JsonBody(user);
+                    with.JsonBody(new UserTestModel() { UserId = 12345, Password = password });
                 }
             );
 
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.Equal("true", result.Body.AsString());
+        }
+
+        [Fact]
+        public void login_returns_bad_request_if_user_id_is_missing()
+        {
+            var browser = new Browser(with => with.Module<UserModule>());
+
+            var result = browser.Post("/generatePassword", with =>
+            {
+                with.HttpRequest();
+                with.JsonBody(new UserTestModel() { Password = "password" });
+            });
+
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1000)]
+        public void login_returns_bad_request_if_user_id_is_invalid(int userId)
+        {
+            var browser = new Browser(with => with.Module<UserModule>());
+
+            var result = browser.Post("/login", with =>
+            {
+                with.HttpRequest();
+                with.JsonBody(new UserTestModel() { UserId = userId, Password = "password" });
+            });
+
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        public void login_returns_bad_request_if_password_is_invalid(string password)
+        {
+            var browser = new Browser(with => with.Module<UserModule>());
+
+            var result = browser.Post("/login", with =>
+            {
+                with.HttpRequest();
+                with.JsonBody(new UserTestModel() { UserId = 123456, Password = password });
+            });
+
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         [Fact]

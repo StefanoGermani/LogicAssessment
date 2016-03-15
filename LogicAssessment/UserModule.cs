@@ -31,6 +31,16 @@ namespace LogicAssessment
             {
                 var user = this.Bind<User>();
 
+                if (user.UserId < 1)
+                {
+                    return new Response() { StatusCode = HttpStatusCode.BadRequest };
+                }
+
+                if (string.IsNullOrWhiteSpace(user.Password))
+                {
+                    return new Response() { StatusCode = HttpStatusCode.BadRequest };
+                }
+
                 var existingUser = userRepository.Get(user.UserId, user.Password);
                 userRepository.Delete(existingUser);
 
