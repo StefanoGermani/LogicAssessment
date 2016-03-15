@@ -22,6 +22,26 @@ namespace LogicAssessment.Tests
         }
 
         [Fact]
+        public void generate_uniques_user_password()
+        {
+            var browser = new Browser(with => with.Module<UserModule>());
+
+            var password1 = browser.Post("/generatePassword", with =>
+            {
+                with.HttpRequest();
+                with.JsonBody(new UserTestModel() { UserId = 12345 });
+            }).Body.AsString();
+
+            var password2 = browser.Post("/generatePassword", with =>
+            {
+                with.HttpRequest();
+                with.JsonBody(new UserTestModel() { UserId = 12345 });
+            }).Body.AsString();
+
+            Assert.NotEqual(password1, password2);
+        }
+
+        [Fact]
         public void generate_user_password_returns_bad_request_if_user_id_is_missing()
         {
             var browser = new Browser(with => with.Module<UserModule>());
