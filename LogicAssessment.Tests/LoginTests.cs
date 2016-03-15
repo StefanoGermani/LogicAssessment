@@ -35,7 +35,7 @@ namespace LogicAssessment.Tests
 
             var password = GeneratePassword(browser, 12345).Body.AsString();
 
-            Thread.Sleep(30500);
+            Thread.Sleep(31000);
 
             var result = browser.Post("/login", with =>
             {
