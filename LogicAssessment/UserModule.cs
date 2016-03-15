@@ -5,10 +5,9 @@ namespace LogicAssessment
 {
     public class UserModule : Nancy.NancyModule
     {
-        public UserModule()
+        public UserModule(IUserRepository userRepository)
         {
             var passwordGenerator = new PasswordGenerator();
-            var userRepository = UserRepository.Instance;
 
             Post["/generatePassword"] = _ =>
             {
@@ -41,7 +40,7 @@ namespace LogicAssessment
                     return new Response() { StatusCode = HttpStatusCode.BadRequest };
                 }
 
-                var existingUser = userRepository.Get(user.UserId, user.Password);
+                var existingUser = userRepository.Find(user.UserId, user.Password);
                 userRepository.Delete(existingUser);
 
                 return (existingUser != null).ToString().ToLower();

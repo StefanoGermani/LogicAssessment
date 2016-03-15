@@ -9,7 +9,7 @@ namespace LogicAssessment.Tests
         [Fact]
         public void generate_user_password()
         {
-            var browser = new Browser(with => with.Module<UserModule>());
+            var browser = CreateBrowser();
 
             var result = browser.Post("/generatePassword", with =>
             {
@@ -24,7 +24,7 @@ namespace LogicAssessment.Tests
         [Fact]
         public void generate_uniques_user_password()
         {
-            var browser = new Browser(with => with.Module<UserModule>());
+            var browser = CreateBrowser();
 
             var password1 = browser.Post("/generatePassword", with =>
             {
@@ -44,7 +44,7 @@ namespace LogicAssessment.Tests
         [Fact]
         public void generate_user_password_returns_bad_request_if_user_id_is_missing()
         {
-            var browser = new Browser(with => with.Module<UserModule>());
+            var browser = CreateBrowser();
 
             var result = browser.Post("/generatePassword", with =>
             {
@@ -59,7 +59,7 @@ namespace LogicAssessment.Tests
         [InlineData(-1000)]
         public void generate_user_password_returns_bad_request_if_user_id_is_invalid(int userId)
         {
-            var browser = new Browser(with => with.Module<UserModule>());
+            var browser = CreateBrowser();
 
             var result = browser.Post("/generatePassword", with =>
             {
@@ -68,6 +68,12 @@ namespace LogicAssessment.Tests
             }); ;
 
             Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        private static Browser CreateBrowser()
+        {
+            var bootstrapper = new DefaultNancyBootstrapper();
+            return new Browser(bootstrapper);
         }
     }
 }
