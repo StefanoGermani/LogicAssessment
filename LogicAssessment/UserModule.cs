@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Nancy;
+using Nancy.ModelBinding;
 
 namespace LogicAssessment
 {
@@ -10,9 +7,28 @@ namespace LogicAssessment
     {
         public UserModule()
         {
-            Post["/generatePassword"] = user => {
-                    return Guid.NewGuid().ToString();
-                };
+            var passwordGenerator = new PasswordGenerator();
+            var userRepository = UserRepository.Instance;
+
+            Post["/generatePassword"] = _ =>
+            {
+                var user = this.Bind<User>();
+                var password = passwordGenerator.Generate();
+
+                user.Password = password;
+                userRepository.Save(user);
+
+                return password;
+            };
+
+            Post["/login"] = _ =>
+            {
+                var user = this.Bind<User>();
+
+                var existingUser = userRepository.Get(user.UserId, user.Password);
+
+                return (existingUser != null).ToString().ToLower();
+            };
         }
     }
 
