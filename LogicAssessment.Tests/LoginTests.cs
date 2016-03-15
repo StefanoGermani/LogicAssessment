@@ -34,7 +34,7 @@ namespace LogicAssessment.Tests
         {
             var browser = new Browser(with => with.Module<UserModule>());
 
-            var result = browser.Post("/generatePassword", with =>
+            var result = browser.Post("/login", with =>
             {
                 with.HttpRequest();
                 with.JsonBody(new UserTestModel() { Password = "password" });
