@@ -71,8 +71,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Tests.cs" />
+    <Compile Include="GeneratePasswordTests.cs" />
+    <Compile Include="LoginTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserTestModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

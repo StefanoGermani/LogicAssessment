@@ -9,37 +9,19 @@ using Xunit;
 
 namespace LogicAssessment.Tests
 {
-    public class Tests
+    public class LoginTests
     {
-        class User
-        {
-            public int UserId { get; set; }
-            public string Password { get; set; }
-        }
-
-        [Fact]
-        public void generate_user_password()
-        {
-            var browser = new Browser(with => with.Module<UserModule>());
-
-            var result = GeneratePassword(browser);
-
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
-            Assert.False(string.IsNullOrEmpty(result.Body.AsString()));
-        }
-
         [Fact]
         public void can_login_with_generated_password()
         {
             var browser = new Browser(with => with.Module<UserModule>());
 
-            var password = GeneratePassword(browser).Body.AsString();
-            var user = new User() { UserId = 12345, Password = password };
+            var password = GeneratePassword(browser, 12345).Body.AsString();
+            var user = new UserTestModel() { UserId = 12345, Password = password };
 
             var result = browser.Post("/login", with =>
                 {
                     with.HttpRequest();
-                    with.Header("Accept", "application/json");
                     with.JsonBody(user);
                 }
             );
@@ -58,8 +40,7 @@ namespace LogicAssessment.Tests
             var result = browser.Post("/login", with =>
             {
                 with.HttpRequest();
-                with.Header("Accept", "application/json");
-                with.JsonBody(new User() { UserId = 12345, Password = password });
+                with.JsonBody(new UserTestModel() { UserId = 12345, Password = password });
             }
             );
 
@@ -67,13 +48,12 @@ namespace LogicAssessment.Tests
             Assert.Equal("false", result.Body.AsString());
         }
 
-        private static BrowserResponse GeneratePassword(Browser browser)
+        private static BrowserResponse GeneratePassword(Browser browser, int userId)
         {
             return browser.Post("/generatePassword", with =>
             {
                 with.HttpRequest();
-                with.Header("Accept", "application/json");
-                with.JsonBody(new User() { UserId = 12345 });
+                with.JsonBody(new UserTestModel() { UserId = userId });
             });
         }
     }

@@ -13,6 +13,12 @@ namespace LogicAssessment
             Post["/generatePassword"] = _ =>
             {
                 var user = this.Bind<User>();
+
+                if(user.UserId < 1)
+                {
+                    return new Response() { StatusCode = HttpStatusCode.BadRequest };
+                }
+
                 var password = passwordGenerator.Generate();
 
                 user.Password = password;
