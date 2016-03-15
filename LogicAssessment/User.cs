@@ -10,5 +10,6 @@ namespace LogicAssessment
     {
         public int UserId { get; set; }
         public string Password { get; set; }
+        public DateTime CreatedDateTime { get; internal set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LogicAssessment
@@ -15,12 +16,13 @@ namespace LogicAssessment
 
         public void Save(User user)
         {
+            user.CreatedDateTime = DateTime.Now;
             _users.Add(user);
         }
 
         public User Get(int userId, string password)
         {
-            return _users.FirstOrDefault(u => u.UserId == userId && u.Password == password);
+            return _users.FirstOrDefault(u => u.UserId == userId && u.Password == password && u.CreatedDateTime.AddSeconds(30) > DateTime.Now);
         }
 
         public void Delete(User user)

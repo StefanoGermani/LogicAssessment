@@ -1,5 +1,6 @@
 ﻿using Nancy;
 using Nancy.Testing;
+using System.Threading;
 using Xunit;
 
 namespace LogicAssessment.Tests
@@ -22,6 +23,26 @@ namespace LogicAssessment.Tests
 
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.Equal("true", result.Body.AsString());
+        }
+
+        [Fact]
+        public void cannot_login_with_generated_password_after_30_secs()
+        {
+            var browser = new Browser(with => with.Module<UserModule>());
+
+            var password = GeneratePassword(browser, 12345).Body.AsString();
+
+            Thread.Sleep(30500);
+
+            var result = browser.Post("/login", with =>
+            {
+                with.HttpRequest();
+                with.JsonBody(new UserTestModel() { UserId = 12345, Password = password });
+            }
+            );
+
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("false", result.Body.AsString());
         }
 
         [Fact]
